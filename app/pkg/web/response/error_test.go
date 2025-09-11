@@ -17,13 +17,14 @@ func TestError(t *testing.T) {
 
 		// act
 		rr := httptest.NewRecorder()
-		code := 0
+		statusCode := 0
 		message := "error message"
-		response.Error(rr, code, message)
+		code := "error_code"
+		response.Error(rr, statusCode, message, code)
 
 		// assert
 		expectedCode := http.StatusInternalServerError
-		expectedBody := `{"status":"Internal Server Error","message":"error message"}`
+		expectedBody := `{"status":"Internal Server Error","message":"error message","code":"error_code"}`
 		expectedHeaders := http.Header{"Content-Type": []string{"application/json"}}
 		require.Equal(t, expectedCode, rr.Code)
 		require.Equal(t, expectedBody, rr.Body.String())
@@ -36,13 +37,14 @@ func TestError(t *testing.T) {
 
 		// act
 		rr := httptest.NewRecorder()
-		code := http.StatusBadRequest
+		statusCode := http.StatusBadRequest
 		message := "error message"
-		response.Error(rr, code, message)
+		code := "error_code"
+		response.Error(rr, statusCode, message, code)
 
 		// assert
 		expectedCode := http.StatusBadRequest
-		expectedBody := `{"status":"Bad Request","message":"error message"}`
+		expectedBody := `{"status":"Bad Request","message":"error message","code":"error_code"}`
 		expectedHeaders := http.Header{"Content-Type": []string{"application/json"}}
 		require.Equal(t, expectedCode, rr.Code)
 		require.Equal(t, expectedBody, rr.Body.String())
@@ -58,14 +60,14 @@ func TestErrorf(t *testing.T) {
 
 		// act
 		rr := httptest.NewRecorder()
-		code := 0
+		code := "error_code"
 		format := "error message %s"
 		args := []interface{}{"arg"}
-		response.Errorf(rr, code, format, args...)
+		response.Errorf(rr, http.StatusInternalServerError, code, format, args...)
 
 		// assert
 		expectedCode := http.StatusInternalServerError
-		expectedBody := `{"status":"Internal Server Error","message":"error message arg"}`
+		expectedBody := `{"status":"Internal Server Error","message":"error message arg","code":"error_code"}`
 		expectedHeaders := http.Header{"Content-Type": []string{"application/json"}}
 		require.Equal(t, expectedCode, rr.Code)
 		require.Equal(t, expectedBody, rr.Body.String())
@@ -78,14 +80,14 @@ func TestErrorf(t *testing.T) {
 
 		// act
 		rr := httptest.NewRecorder()
-		code := http.StatusBadRequest
+		code := "error_code"
 		format := "error message %s"
 		args := []interface{}{"arg"}
-		response.Errorf(rr, code, format, args...)
+		response.Errorf(rr, http.StatusBadRequest, code, format, args...)
 
 		// assert
 		expectedCode := http.StatusBadRequest
-		expectedBody := `{"status":"Bad Request","message":"error message arg"}`
+		expectedBody := `{"status":"Bad Request","message":"error message arg","code":"error_code"}`
 		expectedHeaders := http.Header{"Content-Type": []string{"application/json"}}
 		require.Equal(t, expectedCode, rr.Code)
 		require.Equal(t, expectedBody, rr.Body.String())

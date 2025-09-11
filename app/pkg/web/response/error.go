@@ -9,9 +9,10 @@ import (
 type errorResponse struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
+	Code    string `json:"code,omitempty"`
 }
 
-func Error(w http.ResponseWriter, statusCode int, message string) {
+func Error(w http.ResponseWriter, statusCode int, message string, code string) {
 	// default status code
 	defaultStatusCode := http.StatusInternalServerError
 	// check if status code is valid
@@ -23,6 +24,7 @@ func Error(w http.ResponseWriter, statusCode int, message string) {
 	body := errorResponse{
 		Status:  http.StatusText(defaultStatusCode),
 		Message: message,
+		Code:    code,
 	}
 	bytes, err := json.Marshal(body)
 	if err != nil {
@@ -41,7 +43,7 @@ func Error(w http.ResponseWriter, statusCode int, message string) {
 	}
 }
 
-func Errorf(w http.ResponseWriter, statusCode int, format string, args ...interface{}) {
+func Errorf(w http.ResponseWriter, statusCode int, code, format string, args ...interface{}) {
 	message := fmt.Sprintf(format, args...)
-	Error(w, statusCode, message)
+	Error(w, statusCode, message, code)
 }

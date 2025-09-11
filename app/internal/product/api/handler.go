@@ -1,11 +1,14 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	chi "github.com/go-chi/chi/v5"
+	"github.com/lucasti79/meli-interview/internal/product"
 	_ "github.com/lucasti79/meli-interview/internal/product"
 	"github.com/lucasti79/meli-interview/internal/product/service"
+	"github.com/lucasti79/meli-interview/pkg/apperrors"
 	"github.com/lucasti79/meli-interview/pkg/web/response"
 )
 
@@ -32,7 +35,7 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(products) == 0 {
-		http.Error(w, "No products found", http.StatusNotFound)
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
@@ -49,10 +52,22 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 // @Router /api/v1/products/{productId} [get]
 func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	productId := chi.URLParam(r, "productId")
-	product, err := h.service.GetByIDWithContext(r.Context(), productId)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+
+	if productId == "" {
+		response.Error(w, http.StatusBadRequest, "product ID is required", product.ProductInvalidID)
 		return
 	}
-	response.JSON(w, http.StatusOK, product)
+
+	pr, err := h.service.GetByIDWithContext(r.Context(), productId)
+	if err != nil {
+
+		switch {
+		case errors.Is(err, apperrors.ErrResourceNotExists):
+			response.Error(w, http.StatusNotFound, "product not found", product.ProductNotFound)
+		default:
+			response.Error(w, http.StatusInternalServerError, "internal server error", "")
+		}
+		return
+	}
+	response.JSON(w, http.StatusOK, pr)
 }

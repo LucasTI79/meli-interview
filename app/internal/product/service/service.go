@@ -28,5 +28,11 @@ func (s *Service) GetAllWithContext(ctx context.Context) ([]product.Product, err
 }
 
 func (s *Service) GetByIDWithContext(ctx context.Context, productId string) (*product.Product, error) {
-	return s.repo.GetByIDWithContext(ctx, productId)
+	pr, err := s.repo.GetByIDWithContext(ctx, productId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pr, nil
 }

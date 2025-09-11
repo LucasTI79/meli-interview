@@ -10,6 +10,7 @@ import (
 	"reflect"
 	"sync"
 
+	"github.com/lucasti79/meli-interview/pkg/apperrors"
 	"github.com/lucasti79/meli-interview/pkg/helpers"
 )
 
@@ -69,7 +70,7 @@ func (r *JSONRepository[T]) FindByID(id string) (T, error) {
 
 	offset, ok := r.index[id]
 	if !ok {
-		return zero, fmt.Errorf("%s not found", reflect.TypeOf(zero).Name())
+		return zero, fmt.Errorf("%s not found %w", reflect.TypeOf(zero).Name(), apperrors.ErrResourceNotExists)
 	}
 
 	f, err := os.Open(r.filePath)
@@ -102,7 +103,7 @@ func (r *JSONRepository[T]) Save(entity T) error {
 
 	id := r.getID(entity)
 	if _, exists := r.index[id]; exists {
-		return fmt.Errorf("%s with ID %s already exists", reflect.TypeOf(entity).Name(), id)
+		return fmt.Errorf("%s with ID %s already exists %w", reflect.TypeOf(entity).Name(), id, apperrors.ErrResourceAlreadyExists)
 	}
 
 	dir := filepath.Dir(r.filePath)
