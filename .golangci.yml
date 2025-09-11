@@ -1,0 +1,30 @@
+run:
+    timeout: 5m
+
+issues:
+    exclude-dirs:
+        - "mocks/"
+    exclude-files:
+        - "vendor/"
+    exclude-rules:
+        - path: _test\.go
+          linters:
+            - errcheck
+
+linters-settings:
+    golint:
+        min-confidence: 0.8
+
+linters:
+    disable:
+        - godox
+        - musttag
+    enable-all: false
+    enable:
+        - errcheck
+        - govet
+        - gofmt
+        - gosec
+        - gocyclo
+        - ineffassign
+        - staticcheck

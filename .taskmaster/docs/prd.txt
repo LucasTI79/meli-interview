@@ -1,0 +1,85 @@
+# Product Requirements Document (PRD)
+
+## Overview
+This product is a backend API for a product catalog, exposing endpoints to fetch product details.
+It is designed for frontend developers and product teams who need to consume product information consistently without relying on a database.
+Persistence will be handled via local JSON or CSV files, making it lightweight and portable.
+
+## Core Features
+- Product endpoints
+  - GET /api/products → list all products.
+  - GET /api/products/:id → fetch product by ID.
+- File-based persistence
+  - Products stored in products.json or products.csv.
+- API best practices
+  - Centralized error handling.
+  - Unit tests to ensure stability.
+  - Clear documentation.
+
+## User Experience
+- Persona: Frontend developer integrating with a mock API.
+- Flow:
+  1. Call /api/products → get list of products.
+  2. Call /api/products/:id → get product details.
+- UX considerations:
+  - JSON-based responses for easy consumption.
+  - Errors return meaningful status codes.
+
+## Technical Architecture
+- System components
+  - Go backend (net/http or gorilla/mux).
+  - Local products.json (default datasource).
+  - Error handling middleware.
+- Data model (Go struct example)
+  type Product struct {
+      ID          string  `json:"id"`
+      Name        string  `json:"name"`
+      Description string  `json:"description"`
+      Price       float64 `json:"price"`
+      Category    string  `json:"category"`
+  }
+- APIs
+  - GET /api/products
+  - GET /api/products/{id}
+- Infrastructure
+  - File-based storage.
+  - Run with go run main.go.
+
+## Development Roadmap
+- MVP
+  - Basic Go server with routing.
+  - Load products from JSON file.
+  - Implement GET endpoints.
+  - Add error handling.
+  - Create README.md, run.md, prompts.md.
+- Future enhancements
+  - Add CSV support.
+  - Add CRUD (POST/PUT/DELETE).
+  - Swagger/OpenAPI documentation.
+  - Containerization with Docker.
+
+## Logical Dependency Chain
+1. Setup Go project with main.go.
+2. Define Product model + JSON reader.
+3. Implement /api/products endpoint.
+4. Implement /api/products/{id}.
+5. Add error handling middleware.
+6. Add docs and tests.
+7. Future: CRUD, CSV, Swagger.
+
+## Risks and Mitigations
+- Risk: File corruption
+  - Mitigation: Validate JSON before serving.
+- Risk: Error responses not standardized
+  - Mitigation: Centralize error middleware.
+- Risk: Scope creep
+  - Mitigation: Stick to MVP, document future ideas.
+
+## Appendix
+- Stack: Go + net/http (or gorilla/mux).
+- GenAI & modern tools:
+  - ChatGPT used for PRD, boilerplate, docs generation.
+- Project docs:
+  - README.md → overview.
+  - run.md → run instructions.
+  - prompts.md → GenAI prompts used.

@@ -1,0 +1,50 @@
+definitions:
+  product.Product:
+    properties:
+      category:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/products:
+    get:
+      description: Get a list of all available products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of products
+          schema:
+            items:
+              $ref: '#/definitions/product.Product'
+            type: array
+      summary: List all products
+      tags:
+      - products
+  /api/v1/products/{productId}:
+    get:
+      description: Retrieve details of a product by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product found
+          schema:
+            $ref: '#/definitions/product.Product'
+      summary: Get a product by ID
+      tags:
+      - products
+swagger: "2.0"

@@ -1,0 +1,35 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+      - id: trailing-whitespace
+        files: \.(go|yaml|yml)$
+      - id: end-of-file-fixer
+        files: \.(go|yaml|yml)$
+      - id: check-yaml
+        files: \.(yaml|yml)$
+  - repo: local
+    hooks:
+      - id: golangci-lint
+        name: golangci-lint
+        entry: golangci-lint
+        args: ["run", "--config", ".golangci.yml", "./app/..."]
+        language: system
+        types: [go]
+        pass_filenames: false
+    
+      - id: go-fmt
+        name: go fmt
+        entry: go
+        args: ["fmt", "./app/..."]
+        language: system
+        types: [go]
+        pass_filenames: false
+
+      - id: go-vet
+        name: go vet
+        entry: go
+        args: ["vet", "./app/..."]
+        language: system
+        types: [go]
+        pass_filenames: false

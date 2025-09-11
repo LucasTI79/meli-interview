@@ -1,0 +1,46 @@
+// get products
+GET /products
+Accepts: application/json
+Produces: application/json
+Status: 200 OK
+
+
+{
+  "data": [
+    {
+      "id": "1",
+      "name": "Product 1",
+      "description": "Description for product 1",
+      "price": 10.0,
+      "category": "Category A"
+    },
+    {
+      "id": "2",
+      "name": "Product 2",
+      "description": "Description for product 2",
+      "price": 20.0,
+      "category": "Category B"
+    }
+  ]
+}
+
+// get product by id
+GET /products/{id}
+Accepts: application/json
+Produces: application/json
+200 OK
+{
+  "data": {
+    "id": "1",
+    "name": "Product 1",
+    "description": "Description for product 1",
+    "price": 10.0,
+    "category": "Category A"
+  }
+}
+404 Not Found
+{
+  "error": "product not found"
+}
+
+

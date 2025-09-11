@@ -1,0 +1,145 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize Go Project and Basic Server",
+        "description": "Set up the initial Go module, create the main.go file, and implement a basic HTTP server using net/http or gorilla/mux.",
+        "details": "Initialize a new Go module (`go mod init`). Create a `main.go` file that starts an HTTP server listening on a configurable port. This serves as the foundation for all other API components.",
+        "testStrategy": "Run `go run main.go` and verify that the server starts without errors. A simple log message indicating the server is listening on a specific port is sufficient.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "todo",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Define Product Data Model and JSON Reader",
+        "description": "Define the `Product` struct and implement the logic to load product data from the `products.json` file.",
+        "details": "Create a `Product` struct with fields: ID, Name, Description, Price, and Category. Implement a function to read `products.json`, unmarshal the data into a slice of `Product` structs, and handle potential file read or JSON parsing errors.",
+        "testStrategy": "Write a unit test to verify that the JSON reader correctly parses a sample `products.json` file into a slice of `Product` structs. Test for edge cases like an empty or malformed file.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "todo",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Implement `GET /api/products` Endpoint",
+        "description": "Create the HTTP handler to fetch and return a list of all products.",
+        "details": "Implement a handler function that uses the JSON reader from task 2 to load all products. The handler should serialize the product slice into a JSON array and write it to the HTTP response with a 200 OK status.",
+        "testStrategy": "Start the server, make a `GET` request to `/api/products` using a tool like curl or Postman, and verify that the response is a JSON array of all products from `products.json`.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "todo",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement `GET /api/products/:id` Endpoint",
+        "description": "Create the HTTP handler to fetch a single product by its ID.",
+        "details": "Implement a handler that extracts the product ID from the URL path. It should search the loaded product list for a matching ID and return the corresponding product as a JSON object. If not found, it should return an appropriate error.",
+        "testStrategy": "Make `GET` requests to `/api/products/{id}` with both a valid and an invalid ID. Verify that a valid ID returns the correct product and a 200 OK status, while an invalid ID returns a 404 Not Found status.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "todo",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Implement Centralized Error Handling Middleware",
+        "description": "Create a middleware to standardize API error responses.",
+        "details": "Develop a middleware that wraps the API handlers. It should catch errors (e.g., product not found, bad request, file corruption) and convert them into a consistent JSON error format with meaningful HTTP status codes (e.g., 404, 500).",
+        "testStrategy": "Trigger known error conditions, such as requesting a non-existent product ID or pointing to a corrupt JSON file. Verify that the API returns a standardized JSON error message and the correct HTTP status code.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          4
+        ],
+        "status": "todo",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Add Unit Tests for API Handlers",
+        "description": "Write unit tests for the product list and product detail endpoints.",
+        "details": "Using Go's testing package and `net/http/httptest`, create unit tests for the `/api/products` and `/api/products/:id` handlers. Mock the data loading process to isolate the handler logic. Test for success cases and error cases (e.g., product not found).",
+        "testStrategy": "Run `go test ./...` and ensure all tests pass. Check test coverage to confirm that both success and failure paths within the handlers are tested.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          4,
+          5
+        ],
+        "status": "todo",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Validate JSON Data on Load",
+        "description": "Add a validation step to mitigate the risk of file corruption.",
+        "details": "Enhance the data loading function to perform basic validation on the `products.json` file before loading it into memory. This could involve checking if the file is valid JSON and if the products have essential fields like 'ID'.",
+        "testStrategy": "Attempt to start the server with a malformed or incomplete `products.json` file. Verify that the server logs a clear error and fails to start or returns a 500 error, as per the error handling strategy.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "todo",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Create README.md Documentation",
+        "description": "Write the main project documentation file.",
+        "details": "Create a `README.md` file that includes a project overview, a description of the API endpoints (`GET /api/products`, `GET /api/products/:id`), and basic instructions on how to build and run the service.",
+        "testStrategy": "Have a peer review the `README.md` to ensure it is clear, concise, and provides enough information for a new developer to understand and run the project.",
+        "priority": "low",
+        "dependencies": [
+          3,
+          4
+        ],
+        "status": "todo",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Create run.md for Detailed Instructions",
+        "description": "Create a `run.md` file with detailed instructions on how to run the application.",
+        "details": "Document the step-by-step process for running the application, including any prerequisites (like Go installation), the `go run main.go` command, and examples of using `curl` to hit the endpoints.",
+        "testStrategy": "Follow the instructions in `run.md` from a clean environment to ensure they are accurate and complete.",
+        "priority": "low",
+        "dependencies": [
+          8
+        ],
+        "status": "todo",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Create prompts.md for GenAI Usage",
+        "description": "Document the GenAI prompts used during development.",
+        "details": "As specified in the PRD, create a `prompts.md` file to log the prompts used with tools like ChatGPT for generating boilerplate code, documentation, or other assets.",
+        "testStrategy": "Review the file to ensure it captures the key prompts used, fulfilling the documentation requirement from the PRD.",
+        "priority": "low",
+        "dependencies": [
+          8
+        ],
+        "status": "todo",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-09-11T13:46:39.429Z",
+      "updated": "2025-09-11T13:46:39.429Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
