@@ -2,6 +2,7 @@ package response
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -32,7 +33,9 @@ func JSON(w http.ResponseWriter, code int, body any) {
 	w.WriteHeader(code)
 
 	// write body
-	w.Write(bytes)
+	if _, err := w.Write(bytes); err != nil {
+		fmt.Println("error writing response:", err)
+	}
 } // JSON writes json response
 
 func DataContentJson(w http.ResponseWriter, code int, body any) {
@@ -50,5 +53,7 @@ func DataContentJson(w http.ResponseWriter, code int, body any) {
 
 	w.WriteHeader(code)
 
-	w.Write(bytes)
+	if _, err := w.Write(bytes); err != nil {
+		fmt.Println("error writing response:", err)
+	}
 }

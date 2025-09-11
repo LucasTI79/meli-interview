@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	scalargo "github.com/bdpiprava/scalar-go"
-	"github.com/go-chi/chi/v5"
+	chi "github.com/go-chi/chi/v5"
 	_ "github.com/lucasti79/meli-interview/docs"
 	httpSwagger "github.com/swaggo/http-swagger"
 )

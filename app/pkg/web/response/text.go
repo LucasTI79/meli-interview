@@ -1,6 +1,9 @@
 package response
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 // Text writes text response
 func Text(w http.ResponseWriter, code int, body string) {
@@ -11,5 +14,7 @@ func Text(w http.ResponseWriter, code int, body string) {
 	w.WriteHeader(code)
 
 	// write body
-	w.Write([]byte(body))
+	if _, err := w.Write([]byte(body)); err != nil {
+		fmt.Println("error writing response:", err)
+	}
 }

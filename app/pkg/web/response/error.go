@@ -36,7 +36,9 @@ func Error(w http.ResponseWriter, statusCode int, message string) {
 	// - set status code
 	w.WriteHeader(defaultStatusCode)
 	// - write body
-	w.Write(bytes)
+	if _, err := w.Write(bytes); err != nil {
+		fmt.Println("error writing response:", err)
+	}
 }
 
 func Errorf(w http.ResponseWriter, statusCode int, format string, args ...interface{}) {

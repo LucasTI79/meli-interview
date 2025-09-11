@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
+	chi "github.com/go-chi/chi/v5"
 	_ "github.com/lucasti79/meli-interview/internal/product"
 	"github.com/lucasti79/meli-interview/internal/product/service"
 	"github.com/lucasti79/meli-interview/pkg/web/response"

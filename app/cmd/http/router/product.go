@@ -3,7 +3,7 @@ package router
 import (
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
+	chi "github.com/go-chi/chi/v5"
 	"github.com/lucasti79/meli-interview/internal/product/api"
 )
 
