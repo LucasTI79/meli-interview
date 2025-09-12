@@ -14,7 +14,7 @@ func buildDocsRoutes() http.Handler {
 	r := chi.NewRouter()
 
 	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("/swagger/swagger.json"),
+		httpSwagger.URL("/swagger/doc.json"),
 	))
 
 	r.Get("/docs", func(w http.ResponseWriter, req *http.Request) {
