@@ -1,0 +1,33 @@
+all: false
+filename: "{{.InterfaceName}}_mock.go"
+force-file-write: true
+formatter: goimports
+log-level: info
+structname: "{{.InterfaceName}}Mock"
+pkgname: mocks
+recursive: true
+require-template-schema-exists: true
+template: testify
+template-schema: "{{.Template}}.schema.json"
+
+# Configuração de pacotes específicos
+packages:
+  github.com/lucasti79/meli-interview/internal/category/service:
+    config:
+      dir: internal/category/infra/mocks
+      all: true
+
+  github.com/lucasti79/meli-interview/internal/category/repository:
+    config:
+      dir: internal/category/infra/mocks
+      all: true
+
+  github.com/lucasti79/meli-interview/internal/product/service:
+    config:
+      dir: internal/product/infra/mocks
+      all: true
+
+  github.com/lucasti79/meli-interview/internal/product/repository:
+    config:
+      dir: internal/product/infra/mocks
+      all: true
