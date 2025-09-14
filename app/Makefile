@@ -1,7 +1,7 @@
 # Variáveis
-APP := ./app/cmd/http
+APP := ./cmd/http
 MAIN := $(APP)
-DOCS := ./app/docs
+DOCS := ./docs
 
 # Target padrão
 default: start
@@ -53,8 +53,8 @@ run-bin: build
 # --------------------------------------------------
 # Swagger
 # --------------------------------------------------
-.PHONY: swag
-swag:
+.PHONY: generate docs
+generate-docs:
 	swag init -g $(MAIN)/main.go -o $(DOCS)
 
 # --------------------------------------------------

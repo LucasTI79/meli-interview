@@ -18,7 +18,6 @@ import (
 // @title Example API
 // @version 1.0
 // @description This is an example API
-// @host localhost:8080
 // @BasePath /
 func main() {
 	cfg := config.LoadConfig()

@@ -11,7 +11,7 @@ import (
 
 // Tests for Error
 func TestError(t *testing.T) {
-	t.Run("case 1: should return status code 500 - invalid code", func(t *testing.T) {
+	t.Run("should return status code 500 - invalid code", func(t *testing.T) {
 		// arrange
 		// ...
 
@@ -31,7 +31,7 @@ func TestError(t *testing.T) {
 		require.Equal(t, expectedHeaders, rr.Header())
 	})
 
-	t.Run("case 2: should return status code 400", func(t *testing.T) {
+	t.Run("should return status code 400", func(t *testing.T) {
 		// arrange
 		// ...
 
@@ -54,7 +54,7 @@ func TestError(t *testing.T) {
 
 // Tests for Errorf
 func TestErrorf(t *testing.T) {
-	t.Run("case 1: should return status code 500 - invalid code", func(t *testing.T) {
+	t.Run("should return status code 500 - invalid code", func(t *testing.T) {
 		// arrange
 		// ...
 
@@ -74,7 +74,7 @@ func TestErrorf(t *testing.T) {
 		require.Equal(t, expectedHeaders, rr.Header())
 	})
 
-	t.Run("case 2: should return status code 400", func(t *testing.T) {
+	t.Run("should return status code 400", func(t *testing.T) {
 		// arrange
 		// ...
 
