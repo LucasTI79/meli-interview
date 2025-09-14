@@ -7,27 +7,34 @@ import (
 	"github.com/lucasti79/meli-interview/internal/product/repository"
 )
 
-type Service struct {
+type service struct {
 	repo repository.Repository
 }
 
-func NewService(repo repository.Repository) Service {
-	return Service{repo: repo}
+type Service interface {
+	GetAll(filters product.ProductFilter) ([]product.Product, int, error)
+	GetByID(productId string) (*product.Product, error)
+	GetAllWithContext(ctx context.Context, filters product.ProductFilter) ([]product.Product, int, error)
+	GetByIDWithContext(ctx context.Context, productId string) (*product.Product, error)
 }
 
-func (s *Service) GetAll(filters product.ProductFilter) ([]product.Product, int, error) {
+func NewService(repo repository.Repository) Service {
+	return &service{repo: repo}
+}
+
+func (s *service) GetAll(filters product.ProductFilter) ([]product.Product, int, error) {
 	return s.repo.GetAll(filters)
 }
 
-func (s *Service) GetByID(productId string) (*product.Product, error) {
+func (s *service) GetByID(productId string) (*product.Product, error) {
 	return s.repo.GetByID(productId)
 }
 
-func (s *Service) GetAllWithContext(ctx context.Context, filters product.ProductFilter) ([]product.Product, int, error) {
+func (s *service) GetAllWithContext(ctx context.Context, filters product.ProductFilter) ([]product.Product, int, error) {
 	return s.repo.GetAllWithContext(ctx, filters)
 }
 
-func (s *Service) GetByIDWithContext(ctx context.Context, productId string) (*product.Product, error) {
+func (s *service) GetByIDWithContext(ctx context.Context, productId string) (*product.Product, error) {
 	pr, err := s.repo.GetByIDWithContext(ctx, productId)
 
 	if err != nil {

@@ -7,23 +7,30 @@ import (
 	"github.com/lucasti79/meli-interview/internal/category/repository"
 )
 
-type Service struct {
+type service struct {
 	repo repository.Repository
 }
 
-func NewService(repo repository.Repository) Service {
-	return Service{repo: repo}
+type Service interface {
+	GetAll() ([]category.Category, error)
+	GetAllWithContext(ctx context.Context) ([]category.Category, error)
+	GetByName(name string) (*category.Category, error)
+	GetByNameWithContext(ctx context.Context, name string) (*category.Category, error)
 }
 
-func (s *Service) GetAll() ([]category.Category, error) {
+func NewService(repo repository.Repository) Service {
+	return &service{repo: repo}
+}
+
+func (s *service) GetAll() ([]category.Category, error) {
 	return s.repo.GetAll()
 }
 
-func (s *Service) GetAllWithContext(ctx context.Context) ([]category.Category, error) {
+func (s *service) GetAllWithContext(ctx context.Context) ([]category.Category, error) {
 	return s.repo.GetAllWithContext(ctx)
 }
 
-func (s *Service) GetByName(name string) (*category.Category, error) {
+func (s *service) GetByName(name string) (*category.Category, error) {
 	categories, err := s.repo.GetByName(name)
 	if err != nil {
 		return nil, err
@@ -32,7 +39,7 @@ func (s *Service) GetByName(name string) (*category.Category, error) {
 	return categories, nil
 }
 
-func (s *Service) GetByNameWithContext(ctx context.Context, name string) (*category.Category, error) {
+func (s *service) GetByNameWithContext(ctx context.Context, name string) (*category.Category, error) {
 	categories, err := s.repo.GetByNameWithContext(ctx, name)
 	if err != nil {
 		return nil, err
