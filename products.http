@@ -1,46 +1,158 @@
-// get products
-GET /products
-Accepts: application/json
-Produces: application/json
-Status: 200 OK
+@baseUrl = http://localhost:8080/api/v1
 
+### Get all categories
+GET {{baseUrl}}/categories
+Accept: application/json
+
+###
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "data": [
+    { "name": "Electronics" },
+    { "name": "Clothing" },
+    { "name": "Furniture" }
+  ]
+}
+
+###
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "code": "400",
+  "message": "Bad Request",
+  "status": "error"
+}
+
+###
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+
+{
+  "code": "500",
+  "message": "Internal Server Error",
+  "status": "error"
+}
+
+### Get a category by name
+GET {{baseUrl}}/categories/Electronics
+Accept: application/json
+
+###
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "data": [
+    { "name": "Electronics" }
+  ]
+}
+
+###
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+  "code": "category/not-found",
+  "message": "resource does not exist",
+  "status": "Not Found"
+}
+
+### List all products
+GET {{baseUrl}}/products?page=1&pageSize=10&categories=Electronics
+Accept: application/json
+
+###
+HTTP/1.1 200 OK
+Content-Type: application/json
 
 {
   "data": [
     {
-      "id": "1",
-      "name": "Product 1",
-      "description": "Description for product 1",
-      "price": 10.0,
-      "category": "Category A"
-    },
-    {
-      "id": "2",
-      "name": "Product 2",
-      "description": "Description for product 2",
-      "price": 20.0,
-      "category": "Category B"
+      "productId": "1",
+      "name": "Wireless Bluetooth Headphones",
+      "description": "Premium quality wireless headphones",
+      "price": 199.99,
+      "category": "Electronics",
+      "inStock": true,
+      "rating": 4.5,
+      "reviews": 128,
+      "image": "/wireless-bluetooth-headphones.jpg",
+      "originalPrice": 0
     }
-  ]
+  ],
+  "page": 1,
+  "pageSize": 10,
+  "totalCount": 1
 }
 
-// get product by id
-GET /products/{id}
-Accepts: application/json
-Produces: application/json
-200 OK
+###
+HTTP/1.1 204 No Content
+Content-Type: application/json
+
+{}
+
+###
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "code": "400",
+  "message": "Bad Request",
+  "status": "error"
+}
+
+###
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+
+{
+  "code": "500",
+  "message": "Internal Server Error",
+  "status": "error"
+}
+
+### Get product by ID
+GET {{baseUrl}}/products/0bb33937-fb41-4c2f-ac03-358188977418
+Accept: application/json
+
+###
+HTTP/1.1 200 OK
+Content-Type: application/json
+
 {
   "data": {
-    "id": "1",
-    "name": "Product 1",
-    "description": "Description for product 1",
-    "price": 10.0,
-    "category": "Category A"
+    "productId": "1",
+    "name": "Wireless Bluetooth Headphones",
+    "description": "Premium quality wireless headphones",
+    "price": 199.99,
+    "category": "Electronics",
+    "inStock": true,
+    "rating": 4.5,
+    "reviews": 128,
+    "image": "/wireless-bluetooth-headphones.jpg",
+    "originalPrice": 0
   }
 }
-404 Not Found
+
+###
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
 {
-  "error": "product not found"
+  "code": "product/not-found",
+  "message": "resource does not exist",
+  "status": "Not Found"
 }
 
+###
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
 
+{
+  "code": "500",
+  "message": "Internal Server Error",
+  "status": "error"
+}

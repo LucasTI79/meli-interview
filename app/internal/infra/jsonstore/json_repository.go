@@ -76,7 +76,7 @@ func (r *JSONRepository[T]) FindByID(id string) (T, error) {
 
 	offset, ok := r.index[id]
 	if !ok {
-		return zero, fmt.Errorf("%s not found %w", reflect.TypeOf(zero).Name(), apperrors.ErrResourceNotExists)
+		return zero, apperrors.ErrResourceNotExists
 	}
 
 	f, err := os.Open(r.filePath)
