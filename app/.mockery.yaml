@@ -7,7 +7,7 @@ structname: "{{.InterfaceName}}Mock"
 pkgname: mocks
 recursive: true
 require-template-schema-exists: true
-template: testify
+# template: testify
 template-schema: "{{.Template}}.schema.json"
 
 # Configuração de pacotes específicos

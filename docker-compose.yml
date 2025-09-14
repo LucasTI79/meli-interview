@@ -18,8 +18,6 @@ services:
       - GO111MODULE=on
     networks:
       - default
-    # depends_on:
-    #   - ollama
 
   frontend:
     container_name: nextjs-marketplace

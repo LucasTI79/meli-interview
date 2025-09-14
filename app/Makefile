@@ -22,7 +22,7 @@ develop:
 # --------------------------------------------------
 .PHONY: test
 test:
-	go test ./... -v -cover
+	go test ./... -v -cover -coverprofile=coverage.out && ./scripts/filter_coverage.sh coverage.out coverage_filtered.out && go tool cover -html=coverage_filtered.out
 
 .PHONY: test-verbose
 test-verbose:
@@ -63,3 +63,10 @@ swag:
 .PHONY: clean
 clean:
 	rm -f bin/server
+
+# --------------------------------------------------
+# Mocks
+# --------------------------------------------------
+.PHONY: mocks
+generate-mocks:
+	mockery --config=.mockery.yaml
