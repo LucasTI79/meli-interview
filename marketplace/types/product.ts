@@ -1,6 +1,6 @@
 // Shared TypeScript interfaces for the marketplace
 export interface Product {
-  id: string
+  productId: string
   name: string
   description: string
   price: number
@@ -17,10 +17,7 @@ export interface CartItem extends Product {
 }
 
 export interface Category {
-  id: string
   name: string
-  slug: string
-  description?: string
 }
 
 export interface ApiError {

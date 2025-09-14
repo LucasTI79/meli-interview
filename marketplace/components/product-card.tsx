@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/contexts/cart-context"
 import type { Product } from "@/types/product"
+import { formatPrice } from "@/utils/format-price"
 
 interface ProductCardProps {
   product: Product
@@ -15,13 +16,6 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart()
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(price)
-  }
 
   const renderStars = (rating: number) => {
     const stars = []
@@ -45,9 +39,9 @@ export function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between">
       <div className="relative aspect-square overflow-hidden">
-        <Link href={`/products/${product.id}`}>
+        <Link href={`/products/${product.productId}`}>
           <Image
             src={product.image || "/placeholder.svg"}
             alt={product.name}
@@ -67,7 +61,7 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
 
       <CardContent className="p-4">
-        <Link href={`/products/${product.id}`}>
+        <Link href={`/products/${product.productId}`}>
           <h3 className="font-semibold text-lg mb-2 line-clamp-2 hover:text-primary transition-colors">
             {product.name}
           </h3>

@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
-import { Search, Filter, Grid, List, X, ChevronDown, Tag, DollarSign } from "lucide-react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { useQuery } from "@tanstack/react-query"
+import { Search, Filter, Grid, List, X, ChevronDown, Tag, DollarSign, ChevronLeft, ChevronRight, Package, RefreshCw, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -12,11 +13,9 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { ProductGrid } from "./product-grid"
 import { ProductList } from "./product-list"
-import type { Product } from "@/types/product"
-
-interface ProductsClientProps {
-  products: Product[]
-}
+import { apiService, mockApiService, type ProductsParams } from "@/lib/api"
+import { formatPrice } from "@/utils/format-price"
+import Link from "next/link"
 
 type ViewMode = "grid" | "list"
 
@@ -28,8 +27,12 @@ interface Filters {
   }
 }
 
-export function ProductsClient({ products }: ProductsClientProps) {
+
+export function ProductsClient() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+
   const [searchTerm, setSearchTerm] = useState("")
   const [viewMode, setViewMode] = useState<ViewMode>("grid")
   const [filters, setFilters] = useState<Filters>({
@@ -37,46 +40,109 @@ export function ProductsClient({ products }: ProductsClientProps) {
     priceRange: { min: 0, max: 1000 },
   })
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
 
   useEffect(() => {
     const categoryParam = searchParams.get("category")
+    const searchParam = searchParams.get("name")
+    const pageParam = searchParams.get("page")
+
     if (categoryParam) {
       setFilters((prev) => ({
         ...prev,
         categories: [categoryParam],
       }))
     }
+
+    if (searchParam) {
+      setSearchTerm(searchParam)
+    }
+
+    if (pageParam) {
+      setCurrentPage(Number.parseInt(pageParam, 10))
+    }
   }, [searchParams])
 
-  // Extract unique categories from products
-  const categories = useMemo(() => {
-    const uniqueCategories = [...new Set(products.map((p) => p.category))]
-    return uniqueCategories.sort()
-  }, [products])
+  const queryParams: ProductsParams = useMemo(
+    () => ({
+      page: currentPage,
+      limit: itemsPerPage,
+      name: searchTerm || undefined,
+      categories: filters.categories || undefined,
+      minPrice: filters.priceRange.min > 0 ? filters.priceRange.min : undefined,
+      maxPrice: filters.priceRange.max < 1000 ? filters.priceRange.max : undefined,
+      sortBy: "name",
+      sortOrder: "asc",
+    }),
+    [currentPage, searchTerm, filters],
+  )
 
-  // Filter and search products
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      // Search filter
-      const matchesSearch =
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["products", queryParams],
+    queryFn: () => apiService.getProducts(queryParams),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
 
-      // Category filter
-      const matchesCategory = filters.categories.length === 0 || filters.categories.includes(product.category)
+  const products = data?.data || []
+  const pagination = {
+    page: data?.page ?? 1,
+    pageSize: data?.pageSize,
+    totalCount: data?.totalCount,
+    totalPages: data?.totalCount ? Math.ceil(data?.totalCount / data?.pageSize) : 0
+  }
 
-      // Price filter
-      const matchesPrice = product.price >= filters.priceRange.min && product.price <= filters.priceRange.max
+   const hasActiveFilters = filters.categories?.length || filters.priceRange.max || filters.priceRange.min
 
-      return matchesSearch && matchesCategory && matchesPrice
+  const updateURL = (newParams: Record<string, string | undefined>) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value)
+      } else {
+        params.delete(key)
+      }
     })
-  }, [products, searchTerm, filters])
+
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }
+
+  // Extract unique categories from all products (for filter options)
+  const { data: categories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => apiService.getCategories(),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  })
 
   const handleCategoryChange = (category: string, checked: boolean) => {
+    const newCategories = checked ? [...filters.categories, category] : filters.categories.filter((c) => c !== category)
+
     setFilters((prev) => ({
       ...prev,
-      categories: checked ? [...prev.categories, category] : prev.categories.filter((c) => c !== category),
+      categories: newCategories,
     }))
+
+    setCurrentPage(1)
+    updateURL({
+      category: newCategories[0] || undefined,
+      page: undefined,
+    })
+  }
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value)
+    setCurrentPage(1)
+    updateURL({
+      name: value || undefined,
+      page: undefined,
+    })
+  }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    updateURL({ page: page.toString() })
+    window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
   const clearFilters = () => {
@@ -85,20 +151,107 @@ export function ProductsClient({ products }: ProductsClientProps) {
       priceRange: { min: 0, max: 1000 },
     })
     setSearchTerm("")
+    setCurrentPage(1)
+    router.push(pathname)
   }
 
+  const EmptyState = () => (
+    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+      <div className="relative mb-6">
+        <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center">
+          <Package className="w-12 h-12 text-muted-foreground" />
+        </div>
+        {hasActiveFilters && (
+          <div className="absolute -top-2 -right-2 w-8 h-8 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">
+            <Search className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+          </div>
+        )}
+      </div>
+
+      <h3 className="text-2xl font-semibold mb-2">
+        {hasActiveFilters ? "Nenhum produto encontrado" : "Nenhum produto disponível"}
+      </h3>
+
+      <p className="text-muted-foreground mb-6 max-w-md">
+        {hasActiveFilters
+          ? "Não encontramos produtos que correspondam aos seus filtros. Tente ajustar os critérios de busca."
+          : "Não há produtos disponíveis no momento. Volte em breve para ver novidades!"}
+      </p>
+
+      {hasActiveFilters && (
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <Button onClick={clearFilters} variant="outline" className="flex items-center gap-2 bg-transparent">
+            <X className="w-4 h-4" />
+            Limpar filtros
+          </Button>
+          <Button onClick={() => refetch()} variant="outline" className="flex items-center gap-2">
+            <RefreshCw className="w-4 h-4" />
+            Tentar novamente
+          </Button>
+        </div>
+      )}
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Link href="/">
+          <Button variant="default" className="flex items-center gap-2">
+            <Home className="w-4 h-4" />
+            Voltar ao início
+          </Button>
+        </Link>
+        {hasActiveFilters && (
+          <Link href="/products">
+            <Button variant="outline">Ver todos os produtos</Button>
+          </Link>
+        )}
+      </div>
+
+      {hasActiveFilters && (
+        <div className="mt-8 p-4 bg-muted/50 rounded-lg max-w-md">
+          <p className="text-sm text-muted-foreground mb-2 font-medium">Dicas de busca:</p>
+          <ul className="text-sm text-muted-foreground space-y-1">
+            <li>• Tente termos mais gerais</li>
+            <li>• Verifique a ortografia</li>
+            <li>• Use filtros de categoria diferentes</li>
+          </ul>
+        </div>
+      )}
+    </div>
+  )
+
   const removeCategoryFilter = (categoryToRemove: string) => {
+    const newCategories = filters.categories.filter((cat) => cat !== categoryToRemove)
     setFilters((prev) => ({
       ...prev,
-      categories: prev.categories.filter((cat) => cat !== categoryToRemove),
+      categories: newCategories,
     }))
+    setCurrentPage(1)
+    updateURL({
+      category: newCategories[0] || undefined,
+      page: undefined,
+    })
   }
 
   const removeSearchFilter = () => {
     setSearchTerm("")
+    setCurrentPage(1)
+    updateURL({
+      name: undefined,
+      page: undefined,
+    })
   }
 
   const activeFiltersCount = filters.categories.length + (searchTerm ? 1 : 0)
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-muted-foreground">Erro ao carregar produtos. Tente novamente.</p>
+        <Button onClick={() => window.location.reload()} className="mt-4">
+          Recarregar
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -110,7 +263,7 @@ export function ProductsClient({ products }: ProductsClientProps) {
             placeholder="Buscar produtos..."
             className="pl-10 h-11 bg-background/50 border-border/50 focus:bg-background transition-colors"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
         <div className="flex gap-2">
@@ -159,7 +312,7 @@ export function ProductsClient({ products }: ProductsClientProps) {
                     <h5 className="font-medium text-foreground">Categorias</h5>
                   </div>
                   <div className="space-y-3">
-                    {categories.map((category) => (
+                    {categories?.data?.map(({name: category}) => (
                       <div key={category} className="flex items-center space-x-3 group">
                         <Checkbox
                           id={category}
@@ -226,10 +379,9 @@ export function ProductsClient({ products }: ProductsClientProps) {
                       />
                     </div>
                   </div>
-                  {/* Price range indicator */}
                   <div className="mt-3 p-2 bg-muted/50 rounded-md">
                     <p className="text-xs text-muted-foreground text-center">
-                      R$ {filters.priceRange.min} - R$ {filters.priceRange.max}
+                      {formatPrice(filters.priceRange.min)} - {formatPrice(filters.priceRange.max)}
                     </p>
                   </div>
                 </div>
@@ -263,9 +415,21 @@ export function ProductsClient({ products }: ProductsClientProps) {
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <p className="text-sm text-muted-foreground">
-            {filteredProducts.length} produto{filteredProducts.length !== 1 ? "s" : ""} encontrado
-            {filteredProducts.length !== 1 ? "s" : ""}
-            {searchTerm && ` para "${searchTerm}"`}
+            {isLoading ? (
+              "Carregando..."
+            ) : (
+              <>
+                {pagination?.totalCount || 0} produto{(pagination?.totalCount || 0) !== 1 ? "s" : ""} encontrado
+                {(pagination?.totalCount || 0) !== 1 ? "s" : ""}
+                {searchTerm && ` para "${searchTerm}"`}
+                {pagination && pagination.totalPages > 1 && (
+                  <>
+                    {" "}
+                    • Página {pagination.page} de {pagination.totalPages}
+                  </>
+                )}
+              </>
+            )}
           </p>
 
           {(filters.categories.length > 0 || searchTerm) && (
@@ -296,8 +460,78 @@ export function ProductsClient({ products }: ProductsClientProps) {
         </div>
       </div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-muted rounded-lg h-64 mb-4"></div>
+              <div className="bg-muted rounded h-4 mb-2"></div>
+              <div className="bg-muted rounded h-4 w-2/3"></div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Products Display */}
-      {viewMode === "grid" ? <ProductGrid products={filteredProducts} /> : <ProductList products={filteredProducts} />}
+      {!isLoading && (
+        <>
+          {viewMode === "grid" ? <ProductGrid products={products} /> : <ProductList products={products} />}
+
+          {pagination && pagination.totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-12">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="gap-2"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Anterior
+              </Button>
+
+              <div className="flex gap-1">
+                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                  let pageNum
+                  if (pagination.totalPages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= pagination.totalPages - 2) {
+                    pageNum = pagination.totalPages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handlePageChange(pageNum)}
+                      className="w-10 h-10 p-0"
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === pagination.totalPages}
+                className="gap-2"
+              >
+                Próxima
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   )
 }

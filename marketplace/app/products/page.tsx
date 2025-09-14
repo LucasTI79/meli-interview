@@ -1,25 +1,32 @@
-import { Suspense } from "react"
 import { ProductsClient } from "@/components/products-client"
-import { LoadingSpinner } from "@/components/loading-spinner"
-import { ErrorMessage } from "@/components/error-message"
-import { mockApiService } from "@/lib/api"
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query"
+import getQueryClient from "@/lib/get-query-client"
+import { apiService } from "@/lib/api"
 
-// Server component that fetches products
-async function ProductsContent() {
-  try {
-    const products = await mockApiService.getProducts()
-    return <ProductsClient products={products} />
-  } catch (error) {
-    return (
-      <ErrorMessage
-        title="Erro ao carregar produtos"
-        message="Não foi possível carregar os produtos. Tente novamente mais tarde."
-      />
-    )
-  }
-}
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  const categories = typeof searchParams.categories === "string" ? searchParams.categories : undefined
+  const name = typeof searchParams.name === "string" ? searchParams.name : undefined
+  const minPrice = typeof searchParams.minPrice === "string" ? Number(searchParams.minPrice) : undefined
+  const maxPrice = typeof searchParams.maxPrice === "string" ? Number(searchParams.maxPrice) : undefined
+  const page = typeof searchParams.page === "string" ? Number(searchParams.page) : 1
 
-export default function ProductsPage() {
+  const queryClient = getQueryClient()
+
+  await queryClient.prefetchQuery({
+    queryKey: ["products", { categories, name, minPrice, maxPrice, page }],
+    queryFn: () => apiService.getProducts({ 
+        categories: categories?.split(","), 
+        name, 
+        minPrice, 
+        maxPrice, 
+        page 
+    }),
+  })
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Page Header */}
@@ -28,16 +35,9 @@ export default function ProductsPage() {
         <p className="text-muted-foreground text-lg">Descubra nossa seleção cuidadosa de produtos de alta qualidade</p>
       </div>
 
-      {/* Products with Interactive Features */}
-      <Suspense
-        fallback={
-          <div className="flex justify-center py-12">
-            <LoadingSpinner size="lg" />
-          </div>
-        }
-      >
-        <ProductsContent />
-      </Suspense>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <ProductsClient />
+      </HydrationBoundary>
     </div>
   )
 }

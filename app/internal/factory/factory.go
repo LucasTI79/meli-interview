@@ -1,6 +1,10 @@
 package factory
 
 import (
+	CategoryApi "github.com/lucasti79/meli-interview/internal/category/api"
+	CategoryJsonRepository "github.com/lucasti79/meli-interview/internal/category/infra/jsonstore"
+	CategoryRepository "github.com/lucasti79/meli-interview/internal/category/repository"
+	CategoryService "github.com/lucasti79/meli-interview/internal/category/service"
 	ProductApi "github.com/lucasti79/meli-interview/internal/product/api"
 	ProductJsonRepository "github.com/lucasti79/meli-interview/internal/product/infra/jsonstore"
 	ProductRepository "github.com/lucasti79/meli-interview/internal/product/repository"
@@ -8,7 +12,8 @@ import (
 )
 
 type AppFactory struct {
-	ProductHandler *ProductApi.Handler
+	ProductHandler  *ProductApi.Handler
+	CategoryHandler *CategoryApi.Handler
 }
 
 func NewProductHandler(repo ProductRepository.Repository) (*ProductApi.Handler, error) {
@@ -25,14 +30,35 @@ func NewProductHandler(repo ProductRepository.Repository) (*ProductApi.Handler, 
 	return handler, nil
 }
 
+func NewCategoryHandler(repo CategoryRepository.Repository) (*CategoryApi.Handler, error) {
+	if repo == nil {
+		var err error
+		repo, err = CategoryJsonRepository.NewCategoryRepository("products.jsonl")
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	service := CategoryService.NewService(repo)
+	handler := CategoryApi.NewHandler(service)
+	return handler, nil
+}
+
 func NewAppFactory() (*AppFactory, error) {
 	productHandler, err := NewProductHandler(nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	categoryHandler, err := NewCategoryHandler(nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return &AppFactory{
-		ProductHandler: productHandler,
+		ProductHandler:  productHandler,
+		CategoryHandler: categoryHandler,
 	}, nil
 }
 

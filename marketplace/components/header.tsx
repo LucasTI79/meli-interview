@@ -1,12 +1,16 @@
 "use client"
 
+import type React from "react"
+
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Search, ShoppingCart, User, Menu, Home, Package, Info, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/contexts/cart-context"
+import { useDebounce } from "@/hooks/use-debounce"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -19,7 +23,35 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/co
 
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const { state } = useCart()
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 500)
+
+  useEffect(() => {
+    const searchParam = searchParams.get("name")
+    if (searchParam) {
+      setSearchQuery(searchParam)
+    }
+  }, [searchParams])
+
+  useEffect(() => {
+    if (debouncedSearchQuery.trim() && debouncedSearchQuery !== searchParams.get("name")) {
+      router.push(`/products?name=${encodeURIComponent(debouncedSearchQuery.trim())}`)
+    } else if (!debouncedSearchQuery.trim() && searchParams.get("name")) {
+      router.push("/products")
+    }
+  }, [debouncedSearchQuery, router, searchParams])
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/products?name=${encodeURIComponent(searchQuery.trim())}`)
+      setIsSearchOpen(false)
+    }
+  }
 
   const categories = [
     { name: "Eletrônicos", href: "/products?category=Electronics", icon: Package },
@@ -87,10 +119,15 @@ export function Header() {
 
           {/* Search Bar - Desktop */}
           <div className="hidden md:flex flex-1 max-w-sm mx-8">
-            <div className="relative w-full">
+            <form onSubmit={handleSearch} className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Buscar produtos..." className="pl-10" />
-            </div>
+              <Input
+                placeholder="Buscar produtos..."
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </form>
           </div>
 
           {/* Actions */}
@@ -220,10 +257,16 @@ export function Header() {
         {/* Mobile Search */}
         {isSearchOpen && (
           <div className="md:hidden py-4 border-t">
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Buscar produtos..." className="pl-10" />
-            </div>
+              <Input
+                placeholder="Buscar produtos..."
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+              />
+            </form>
           </div>
         )}
       </div>

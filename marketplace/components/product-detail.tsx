@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image"
 import { Star, ShoppingCart, Heart, Share2, Truck, Shield, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -5,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useCart } from "@/contexts/cart-context"
 import type { Product } from "@/types/product"
 
 interface ProductDetailProps {
@@ -12,11 +15,17 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ product }: ProductDetailProps) {
+  const { addItem } = useCart()
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(price)
+  }
+
+  const handleAddToCart = () => {
+    addItem(product)
   }
 
   const renderStars = (rating: number) => {
@@ -87,7 +96,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
         {/* Action Buttons */}
         <div className="space-y-4">
           <div className="flex gap-3">
-            <Button size="lg" className="flex-1" disabled={!product.inStock}>
+            <Button size="lg" className="flex-1" disabled={!product.inStock} onClick={handleAddToCart}>
               <ShoppingCart className="h-5 w-5 mr-2" />
               {product.inStock ? "Adicionar ao Carrinho" : "Indisponível"}
             </Button>
@@ -169,7 +178,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
               </div>
               <div className="flex justify-between py-2 border-b">
                 <span className="font-medium">SKU</span>
-                <span className="text-muted-foreground">PRD-{product.id.toString().padStart(6, "0")}</span>
+                <span className="text-muted-foreground">PRD-{product.productId.toString().padStart(6, "0")}</span>
               </div>
             </div>
           </TabsContent>

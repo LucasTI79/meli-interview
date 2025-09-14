@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { CartProvider } from "@/contexts/cart-context"
+import { QueryProvider } from "@/providers/query-provider"
 import { Suspense } from "react"
 import "./globals.css"
 
@@ -23,15 +24,17 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <CartProvider>
-          <Suspense fallback={<div>Loading...</div>}>
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-          </Suspense>
-        </CartProvider>
+        <QueryProvider>
+          <CartProvider>
+            <Suspense fallback={<div>Loading...</div>}>
+              <div className="min-h-screen flex flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+            </Suspense>
+          </CartProvider>
+        </QueryProvider>
         <Analytics />
       </body>
     </html>

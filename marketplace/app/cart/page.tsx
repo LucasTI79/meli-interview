@@ -8,16 +8,10 @@ import { Separator } from "@/components/ui/separator"
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { formatPrice } from "@/utils/format-price"
 
 export default function CartPage() {
   const { state, updateQuantity, removeItem, clearCart } = useCart()
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(price)
-  }
 
   if (state.items.length === 0) {
     return (
@@ -62,7 +56,7 @@ export default function CartPage() {
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-4">
           {state.items.map((item) => (
-            <Card key={item.id} className="overflow-hidden">
+            <Card key={item.productId} className="overflow-hidden">
               <CardContent className="p-6">
                 <div className="flex gap-4">
                   <div className="relative w-24 h-24 flex-shrink-0">
@@ -85,7 +79,7 @@ export default function CartPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeItem(item.productId)}
                         className="text-destructive hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -99,13 +93,13 @@ export default function CartPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                           disabled={item.quantity <= 1}
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
                         <span className="w-12 text-center font-medium">{item.quantity}</span>
-                        <Button variant="outline" size="sm" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                        <Button variant="outline" size="sm" onClick={() => updateQuantity(item.productId, item.quantity + 1)}>
                           <Plus className="h-3 w-3" />
                         </Button>
                       </div>

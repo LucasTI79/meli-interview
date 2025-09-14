@@ -4,14 +4,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ProductGrid } from "@/components/product-grid"
-import { mockApiService } from "@/lib/api"
+import { apiService } from "@/lib/api"
 
 // Server component that fetches featured products
 async function FeaturedProducts() {
   try {
-    const products = await mockApiService.getProducts()
-    // Show only first 4 products as featured
-    const featuredProducts = products.slice(0, 4)
+    const products = await apiService.getProducts({
+        pageSize: 4
+    })
+    const featuredProducts = products.data
     return <ProductGrid products={featuredProducts} />
   } catch (error) {
     return (

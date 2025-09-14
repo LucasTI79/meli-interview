@@ -37,7 +37,7 @@ export function ProductList({ products, loading = false }: ProductListProps) {
   return (
     <div className="space-y-4">
       {products.map((product) => (
-        <ProductListItem key={product.id} product={product} />
+        <ProductListItem key={product.productId} product={product} />
       ))}
     </div>
   )

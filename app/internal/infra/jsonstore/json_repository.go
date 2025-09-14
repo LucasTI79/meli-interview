@@ -16,6 +16,12 @@ import (
 
 type IDGetter[T any] func(entity T) string
 
+type Filter struct {
+	Field    string      `json:"field"`
+	Operator string      `json:"operator"`
+	Value    interface{} `json:"value"`
+}
+
 type JSONRepository[T any] struct {
 	filePath string
 	mutex    sync.Mutex
@@ -152,4 +158,84 @@ func (r *JSONRepository[T]) FindAll(handler func(entity T) error) error {
 	}
 
 	return scanner.Err()
+}
+
+func (r *JSONRepository[T]) FindAllWhere(predicate func(entity T) bool, handler func(entity T) error) error {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
+	f, err := os.Open(r.filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		var entity T
+		if err := json.Unmarshal(scanner.Bytes(), &entity); err != nil {
+			return err
+		}
+
+		if predicate(entity) {
+			if err := handler(entity); err != nil {
+				return err
+			}
+		}
+	}
+
+	return scanner.Err()
+}
+
+func (r *JSONRepository[T]) FindAllWherePaginated(
+	predicate func(entity T) bool,
+	page, pageSize int,
+	handler func(entity T) error,
+) (int, error) {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
+	f, err := os.Open(r.filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return 0, nil
+		}
+		return 0, err
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+
+	skipped := 0
+	collected := 0
+	total := 0
+	start := (page - 1) * pageSize
+
+	for scanner.Scan() {
+		var entity T
+		if err := json.Unmarshal(scanner.Bytes(), &entity); err != nil {
+			return total, err
+		}
+
+		if predicate(entity) {
+			total++
+
+			if skipped < start {
+				skipped++
+				continue
+			}
+
+			if collected < pageSize {
+				if err := handler(entity); err != nil {
+					return total, err
+				}
+				collected++
+			}
+		}
+	}
+
+	return total, scanner.Err()
 }
