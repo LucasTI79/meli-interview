@@ -1,0 +1,43 @@
+services:
+  backend:
+    container_name: go-backend
+    build:
+      context: ./app
+      dockerfile: docker/Dockerfile
+    command: air -c .air.toml
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    environment:
+      - GO111MODULE=on
+    depends_on:
+      - ollama
+
+  frontend:
+    container_name: nextjs-marketplace
+    build:
+      context: ./marketplace
+      dockerfile: docker/Dockerfile
+    command: npm run dev
+    volumes:
+      - ./marketplace:/app
+      - /app/node_modules
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+
+  ollama:
+    container_name: ollama
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
