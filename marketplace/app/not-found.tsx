@@ -10,7 +10,6 @@ export default function NotFound() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
       <Card className="w-full max-w-md mx-auto shadow-xl">
         <CardContent className="p-8 text-center space-y-6">
-          {/* 404 Icon */}
           <div className="relative">
             <div className="w-24 h-24 mx-auto bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 rounded-full flex items-center justify-center shadow-inner">
               <Search className="w-10 h-10 text-slate-400 dark:text-slate-500" />
@@ -20,7 +19,6 @@ export default function NotFound() {
             </div>
           </div>
 
-          {/* Error Message */}
           <div className="space-y-2">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">404</h1>
             <h2 className="text-xl font-semibold text-slate-700 dark:text-slate-300">Página não encontrada</h2>
@@ -29,7 +27,6 @@ export default function NotFound() {
             </p>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <Button asChild variant="default" className="flex-1">
               <Link href="/" className="flex items-center justify-center gap-2">
@@ -45,7 +42,6 @@ export default function NotFound() {
             </Button>
           </div>
 
-          {/* Back Button */}
           <Button
             variant="ghost"
             onClick={() => window.history.back()}

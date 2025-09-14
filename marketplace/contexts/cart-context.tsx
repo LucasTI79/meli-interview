@@ -87,7 +87,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     itemCount: 0,
   })
 
-  // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem("marketplace-cart")
     if (savedCart) {
@@ -100,7 +99,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("marketplace-cart", JSON.stringify(state.items))
   }, [state.items])

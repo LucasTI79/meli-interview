@@ -45,7 +45,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Product Image */}
       <div className="space-y-4">
         <div className="relative aspect-square overflow-hidden rounded-lg border">
           <Image
@@ -64,7 +63,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
         </div>
       </div>
 
-      {/* Product Info */}
       <div className="space-y-6">
         <div>
           <Badge variant="secondary" className="mb-2">
@@ -87,7 +85,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         <Separator />
 
-        {/* Action Buttons */}
         <div className="space-y-4">
           <div className="flex gap-3">
             <Button size="lg" className="flex-1" disabled={!product.inStock} onClick={handleAddToCart}>
@@ -111,7 +108,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         <Separator />
 
-        {/* Features */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
@@ -146,7 +142,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         <Separator />
 
-        {/* Product Details Tabs */}
         <Tabs defaultValue="description" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="description">Descrição</TabsTrigger>

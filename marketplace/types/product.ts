@@ -1,4 +1,3 @@
-// Shared TypeScript interfaces for the marketplace
 export interface Product {
   productId: string
   name: string

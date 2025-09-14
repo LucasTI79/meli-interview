@@ -34,7 +34,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8080
+      NEXT_PUBLIC_API_URL_CLIENT: http://localhost:8080
+      API_URL_SERVER: http://backend:8080
+    networks:
+      - default
 #   ollama:
 #     container_name: ollama
 #     image: ollama/ollama:latest

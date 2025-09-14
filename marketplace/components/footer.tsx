@@ -9,7 +9,6 @@ export function Footer() {
     <footer className="bg-muted/30 border-t">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
@@ -33,7 +32,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div className="space-y-4">
             <h3 className="font-semibold">Links Rápidos</h3>
             <nav className="flex flex-col space-y-2">
@@ -52,7 +50,6 @@ export function Footer() {
             </nav>
           </div>
 
-          {/* Customer Service */}
           <div className="space-y-4">
             <h3 className="font-semibold">Atendimento</h3>
             <nav className="flex flex-col space-y-2">
@@ -71,7 +68,6 @@ export function Footer() {
             </nav>
           </div>
 
-          {/* Newsletter */}
           <div className="space-y-4">
             <h3 className="font-semibold">Newsletter</h3>
             <p className="text-sm text-muted-foreground">Receba ofertas exclusivas e novidades em primeira mão.</p>
@@ -84,7 +80,6 @@ export function Footer() {
 
         <Separator className="my-8" />
 
-        {/* Contact Info */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <Mail className="h-4 w-4" />
@@ -102,7 +97,6 @@ export function Footer() {
 
         <Separator className="mb-8" />
 
-        {/* Bottom */}
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-sm text-muted-foreground">© 2024 Marketplace. Todos os direitos reservados.</p>
           <div className="flex space-x-4">

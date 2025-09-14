@@ -95,7 +95,6 @@ export function ProductsClient() {
         router.push(`${pathname}?${params.toString()}`, { scroll: false })
     }
 
-    // Extract unique categories from all products (for filter options)
     const { data: categories } = useQuery({
         queryKey: ["categories"],
         queryFn: () => apiService.getCategories(),
@@ -241,7 +240,6 @@ export function ProductsClient() {
 
     return (
         <div>
-            {/* Search and Controls */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -272,7 +270,6 @@ export function ProductsClient() {
                         </PopoverTrigger>
                         <PopoverContent className="w-80 p-0 shadow-xl border-border/50" align="end">
                             <div className="bg-gradient-to-b from-background to-background/95">
-                                {/* Header */}
                                 <div className="flex items-center justify-between p-6 pb-4">
                                     <div className="flex items-center gap-2">
                                         <Filter className="h-4 w-4 text-primary" />
@@ -291,7 +288,6 @@ export function ProductsClient() {
 
                                 <Separator className="mx-6" />
 
-                                {/* Categories Section */}
                                 <div className="p-6 pb-4">
                                     <div className="flex items-center gap-2 mb-4">
                                         <Tag className="h-4 w-4 text-primary" />
@@ -324,7 +320,6 @@ export function ProductsClient() {
 
                                 <Separator className="mx-6" />
 
-                                {/* Price Range Section */}
                                 <div className="p-6">
                                     <div className="flex items-center gap-2 mb-4">
                                         <DollarSign className="h-4 w-4 text-primary" />
@@ -397,7 +392,6 @@ export function ProductsClient() {
                 </div>
             </div>
 
-            {/* Results Info with Active Filters */}
             <div className="mb-6">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                     <p className="text-sm text-muted-foreground">
@@ -446,7 +440,6 @@ export function ProductsClient() {
                 </div>
             </div>
 
-            {/* Loading State */}
             {isLoading && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {Array.from({ length: 8 }).map((_, i) => (
@@ -459,7 +452,6 @@ export function ProductsClient() {
                 </div>
             )}
 
-            {/* Products Display */}
             {!isLoading && products.length > 0 ? (
                 <>
                     {viewMode === "grid" ? <ProductGrid products={products} /> : <ProductList products={products} />}

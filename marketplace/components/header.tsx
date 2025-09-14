@@ -65,7 +65,6 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="h-8 w-8 bg-slate-900 dark:bg-slate-100 rounded-lg flex items-center justify-center shadow-sm">
               <span className="text-white dark:text-slate-900 font-bold text-sm">M</span>
@@ -75,7 +74,6 @@ export function Header() {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <NavigationMenu className="hidden lg:flex">
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -117,7 +115,6 @@ export function Header() {
             </NavigationMenuList>
           </NavigationMenu>
 
-          {/* Search Bar - Desktop */}
           <div className="hidden md:flex flex-1 max-w-sm mx-8">
             <form onSubmit={handleSearch} className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -130,14 +127,11 @@ export function Header() {
             </form>
           </div>
 
-          {/* Actions */}
           <div className="flex items-center space-x-2">
-            {/* Search Button - Mobile */}
             <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setIsSearchOpen(!isSearchOpen)}>
               <Search className="h-5 w-5" />
             </Button>
 
-            {/* Cart */}
             <Link href="/cart">
               <Button variant="ghost" size="sm" className="relative">
                 <ShoppingCart className="h-5 w-5" />
@@ -149,7 +143,6 @@ export function Header() {
               </Button>
             </Link>
 
-            {/* User Account */}
             <Button variant="ghost" size="sm">
               <User className="h-5 w-5" />
             </Button>
@@ -162,7 +155,6 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[320px] sm:w-[400px] p-0">
                 <div className="flex flex-col h-full">
-                  {/* Header */}
                   <SheetHeader className="px-6 py-4 border-b bg-gradient-to-r from-background to-muted/20">
                     <SheetTitle className="flex items-center space-x-2 text-left">
                       <div className="h-6 w-6 bg-slate-900 dark:bg-slate-100 rounded-md flex items-center justify-center">
@@ -172,9 +164,7 @@ export function Header() {
                     </SheetTitle>
                   </SheetHeader>
 
-                  {/* Navigation */}
                   <nav className="flex-1 px-6 py-6 space-y-6">
-                    {/* Main Links */}
                     <div className="space-y-3">
                       <Link
                         href="/products"
@@ -193,7 +183,6 @@ export function Header() {
                       </Link>
                     </div>
 
-                    {/* Categories Section */}
                     <div className="space-y-3">
                       <div className="flex items-center space-x-2 px-3">
                         <Tag className="h-4 w-4 text-muted-foreground" />
@@ -221,7 +210,6 @@ export function Header() {
                     </div>
                   </nav>
 
-                  {/* Footer */}
                   <div className="px-6 py-4 border-t bg-muted/20">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
@@ -254,7 +242,6 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile Search */}
         {isSearchOpen && (
           <div className="md:hidden py-4 border-t">
             <form onSubmit={handleSearch} className="relative">

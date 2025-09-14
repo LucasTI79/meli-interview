@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge"
 import { ProductGrid } from "@/components/product-grid"
 import { apiService } from "@/lib/api"
 
-// Server component that fetches featured products
 async function FeaturedProducts() {
   try {
     const products = await apiService.getProducts({
@@ -26,7 +25,6 @@ async function FeaturedProducts() {
 export default function HomePage() {
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary/5 via-background to-accent/5 py-20">
         <div className="container mx-auto px-4 text-center">
           <Badge variant="secondary" className="mb-4">
@@ -56,7 +54,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -99,7 +96,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Products Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">

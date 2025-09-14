@@ -29,15 +29,13 @@ async function ProductContent({ productId }: { productId: string }) {
         )
     }
 }
-
-// Server component that fetches related products
 async function RelatedProducts({ currentProductId, category }: { currentProductId: string; category?: string }) {
     try {
         const allProducts = await apiService.getProducts({
             pageSize: 5,
             categories: category ? [category] : []
         })
-        // Filter out current product and get products from same category
+
         const relatedProducts = allProducts.data
             .filter((product) => product.productId !== currentProductId && (!category || product.category === category))
 
@@ -59,19 +57,17 @@ async function RelatedProducts({ currentProductId, category }: { currentProductI
 export default async function ProductPage({ params }: ProductPageProps) {
     const productId = params.id
 
-    // Get product for metadata and related products
     let response: ApiResponse<Product> | null = null
     try {
         response = await apiService.getProduct(productId)
     } catch (error) {
-        // Product will be null, handled in ProductContent
+
     }
 
     const product = response?.data
 
     return (
         <div className="container mx-auto px-4 py-8">
-            {/* Breadcrumb */}
             <div className="mb-8">
                 <Button variant="ghost" asChild className="mb-4">
                     <Link href="/products">
@@ -81,7 +77,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 </Button>
             </div>
 
-            {/* Product Details */}
             <Suspense
                 fallback={
                     <div className="flex justify-center py-12">
@@ -92,7 +87,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <ProductContent productId={productId} />
             </Suspense>
 
-            {/* Related Products */}
             {product && (
                 <Suspense fallback={<div className="mt-16 h-64" />}>
                     <RelatedProducts currentProductId={productId} category={product.category} />
@@ -101,8 +95,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
     )
 }
-
-// Generate metadata for SEO
 export async function generateMetadata({ params }: ProductPageProps) {
     const productId = params.id
 
@@ -129,8 +121,6 @@ export async function generateMetadata({ params }: ProductPageProps) {
         }
     }
 }
-
-// Generate static params for static generation (optional)
 export async function generateStaticParams() {
     try {
         const products = await apiService.getProducts()

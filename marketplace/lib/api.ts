@@ -1,6 +1,5 @@
 import { Category } from "@/types/product"
 
-// API service layer for Go backend integration
 export interface Product {
   productId: string
   name: string
@@ -51,7 +50,11 @@ class ApiService implements IApiService {
   private baseUrl?: string
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_URL
+    if (typeof window !== "undefined") {
+      this.baseUrl = process.env.NEXT_PUBLIC_API_URL_CLIENT
+    } else {
+      this.baseUrl = process.env.API_URL_SERVER
+    }
   }
 
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -71,7 +74,7 @@ class ApiService implements IApiService {
       }
 
       if (response.status === 204) {
-        return null as T // No content
+        return null as T
       }
 
       const data = await response.json()
@@ -120,7 +123,6 @@ class ApiService implements IApiService {
 
 export const apiService = new ApiService()
 
-// Mock data for development/demo purposes
 export const mockProducts: Product[] = [
   {
     productId: "1",
@@ -190,7 +192,6 @@ export const mockProducts: Product[] = [
   },
 ]
 
-// Helper function to simulate API delay for development
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export const mockApiService: IApiService = {

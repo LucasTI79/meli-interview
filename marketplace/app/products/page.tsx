@@ -29,7 +29,6 @@ export default async function ProductsPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-balance mb-4">Nossos Produtos</h1>
         <p className="text-muted-foreground text-lg">Descubra nossa seleção cuidadosa de produtos de alta qualidade</p>
