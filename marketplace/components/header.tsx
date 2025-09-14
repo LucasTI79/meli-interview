@@ -28,7 +28,7 @@ export function Header() {
   const searchParams = useSearchParams()
   const { state } = useCart()
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 500)
+  const debouncedSearchQuery = useDebounce(searchQuery, 250)
 
   useEffect(() => {
     const searchParam = searchParams.get("name")

@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useCart } from "@/contexts/cart-context"
 import type { Product } from "@/types/product"
+import { formatPrice } from "@/utils/format-price"
 
 interface ProductDetailProps {
   product: Product
@@ -16,13 +17,6 @@ interface ProductDetailProps {
 
 export function ProductDetail({ product }: ProductDetailProps) {
   const { addItem } = useCart()
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(price)
-  }
 
   const handleAddToCart = () => {
     addItem(product)
@@ -78,13 +72,13 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </Badge>
           <h1 className="text-3xl font-bold text-balance mb-4">{product.name}</h1>
 
-          {product.rating && (
+          {product.rating ? (
             <div className="flex items-center gap-3 mb-4">
               <div className="flex items-center">{renderStars(product.rating)}</div>
               <span className="text-lg font-medium">{product.rating}</span>
               <span className="text-muted-foreground">({product.reviews} avaliações)</span>
             </div>
-          )}
+          ) : null}
 
           <div className="flex items-baseline gap-2 mb-6">
             <span className="text-4xl font-bold text-primary">{formatPrice(product.price)}</span>

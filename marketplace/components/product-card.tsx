@@ -83,7 +83,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
       <CardFooter className="p-4 pt-0">
         <Button
-          className="w-full"
+          className="w-full pointer"
           disabled={!product.inStock}
           variant={product.inStock ? "default" : "secondary"}
           onClick={() => product.inStock && addItem(product)}

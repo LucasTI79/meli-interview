@@ -39,12 +39,19 @@ export interface ProductsParams extends ProductFilters {
   pageSize?: number
 }
 
-class ApiService {
-  private baseUrl: string
+export interface IApiService {
+  getProducts(params?: ProductsParams): Promise<PaginatedResponse<Product>>
+  getProduct(id: string): Promise<ApiResponse<Product>>
+  searchProducts(query: string): Promise<PaginatedResponse<Product>>
+  getProductsByCategory(category: string): Promise<PaginatedResponse<Product>>
+  getCategories(): Promise<ApiResponse<Category[]>>
+}
+
+class ApiService implements IApiService {
+  private baseUrl?: string
 
   constructor() {
-    // In production, this would come from environment variables
-    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+    this.baseUrl = process.env.NEXT_PUBLIC_API_URL
   }
 
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -61,6 +68,10 @@ class ApiService {
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      if (response.status === 204) {
+        return null as T // No content
       }
 
       const data = await response.json()
@@ -182,7 +193,7 @@ export const mockProducts: Product[] = [
 // Helper function to simulate API delay for development
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export const mockApiService = {
+export const mockApiService: IApiService = {
   async getProducts(params?: ProductsParams): Promise<PaginatedResponse<Product>> {
     await delay(500)
 
@@ -245,25 +256,38 @@ export const mockApiService = {
     }
   },
 
-  async getProduct(id: string): Promise<Product> {
+  async getProduct(id: string):Promise<ApiResponse<Product>> {
     await delay(300)
     const product = mockProducts.find((p) => p.productId === id)
     if (!product) {
       throw new Error(`Product with id ${id} not found`)
     }
-    return product
+    return { data: product }
   },
 
-  async searchProducts(query: string): Promise<Product[]> {
+  async searchProducts(query: string): Promise<PaginatedResponse<Product>> {
     await delay(400)
-    return mockProducts.filter(
+    const results = mockProducts.filter(
       (product) =>
         product.name.toLowerCase().includes(query.toLowerCase())
     )
+    return { data: results, page: 1, pageSize: results.length, totalCount: results.length }
   },
 
-  async getProductsByCategory(category: string): Promise<Product[]> {
+  async getProductsByCategory(category: string): Promise<PaginatedResponse<Product>> {
     await delay(400)
-    return mockProducts.filter((product) => product.category.toLowerCase() === category.toLowerCase())
+    const results = mockProducts.filter((product) => product.category.toLowerCase() === category.toLowerCase())
+    return {
+      data: results,
+      page: 1,
+      pageSize: results.length,
+      totalCount: results.length
+    }
   },
+
+    async getCategories(): Promise<ApiResponse<Category[]>> {
+    await delay(200)
+    const categories = Array.from(new Set(mockProducts.map((p) => p.category)))
+    return { data: categories.map((cat) => ({ name: cat })) }
+  }
 }

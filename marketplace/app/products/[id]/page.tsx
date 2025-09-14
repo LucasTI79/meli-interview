@@ -106,7 +106,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 export async function generateMetadata({ params }: ProductPageProps) {
     const productId = params.id
 
-    if (productId) {
+    if (!productId) {
         return {
             title: "Produto não encontrado",
         }
