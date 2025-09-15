@@ -30,7 +30,11 @@ type JSONRepository[T any] struct {
 }
 
 func NewJSONRepository[T any](fileName string, getID IDGetter[T]) (*JSONRepository[T], error) {
-	path := filepath.Join(helpers.ProjectRoot(), fileName)
+	path := fileName
+	if !filepath.IsAbs(fileName) {
+		path = filepath.Join(helpers.ProjectRoot(), fileName)
+	}
+
 	repo := &JSONRepository[T]{
 		filePath: path,
 		index:    make(map[string]int64),
@@ -109,7 +113,7 @@ func (r *JSONRepository[T]) Save(entity T) error {
 
 	id := r.getID(entity)
 	if _, exists := r.index[id]; exists {
-		return fmt.Errorf("%s with ID %s already exists %w", reflect.TypeOf(entity).Name(), id, apperrors.ErrResourceAlreadyExists)
+		return fmt.Errorf("%s with ID %s already exists", reflect.TypeOf(entity).Name(), id)
 	}
 
 	dir := filepath.Dir(r.filePath)

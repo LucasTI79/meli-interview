@@ -37,14 +37,3 @@ services:
       API_URL_SERVER: http://backend:8080
     networks:
       - default
-#   ollama:
-#     container_name: ollama
-#     image: ollama/ollama:latest
-#     ports:
-#       - "11434:11434"
-#     volumes:
-#       - ollama_data:/root/.ollama
-#     restart: unless-stopped
-
-volumes:
-  ollama_data:
