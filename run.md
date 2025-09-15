@@ -98,11 +98,13 @@ npm run dev
 
 After starting the backend, access the Swagger UI for API documentation and testing:
 
-- http://localhost:8080/swagger/index.html
+- http://localhost:8080/swagger/index.html (local)
+- http://api.localhost/swagger/index.html (with Traefik)
 
 Or access scalar docs:
 
-- http://localhost:8080/docs
+- http://localhost:8080/docs (local)
+- http://api.localhost/docs (with Traefik)
 
 ---
 
