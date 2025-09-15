@@ -87,20 +87,20 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         <div className="space-y-4">
           <div className="flex gap-3">
-            <Button size="lg" className="flex-1" disabled={!product.inStock} onClick={handleAddToCart}>
+            <Button size="lg" className="flex-1 cursor-pointer" disabled={!product.inStock} onClick={handleAddToCart}>
               <ShoppingCart className="h-5 w-5 mr-2" />
               {product.inStock ? "Adicionar ao Carrinho" : "Indisponível"}
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="cursor-pointer">
               <Heart className="h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="cursor-pointer">
               <Share2 className="h-5 w-5" />
             </Button>
           </div>
 
           {product.inStock && (
-            <Button size="lg" variant="secondary" className="w-full">
+            <Button size="lg" variant="secondary" className="w-full cursor-pointer" disabled>
               Comprar Agora
             </Button>
           )}

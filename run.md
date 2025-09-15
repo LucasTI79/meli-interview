@@ -29,8 +29,8 @@ This will start both backend and frontend containers:
 docker-compose up backend frontend -d
 ```
 
-- Backend API: http://localhost:8080
-- Frontend: http://localhost:3000
+- Backend API: http://api.localhost
+- Frontend: http://app.localhost
 
 To stop the services:
 

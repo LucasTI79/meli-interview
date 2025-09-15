@@ -1,8 +1,24 @@
 networks:
-    default:
-        driver: bridge
+  default:
+    driver: bridge
 
 services:
+  traefik:
+    image: traefik:v2.11
+    container_name: traefik
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+      - "8081:8080" # Traefik dashboard
+    networks:
+      - default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
   backend:
     container_name: go-backend
     build:
@@ -12,11 +28,14 @@ services:
     volumes:
       - ./app:/app
     working_dir: /app
-    ports:
-      - "8080:8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`api.localhost`)"
+      - "traefik.http.routers.api.entrypoints=web"
+      - "traefik.http.services.api.loadbalancer.server.port=8080"
     environment:
       GO111MODULE: on
-      HOST: 127.0.0.1
+      HOST: 0.0.0.0
     networks:
       - default
 
@@ -30,10 +49,13 @@ services:
       - ./marketplace:/app
       - /app/node_modules
     working_dir: /app
-    ports:
-      - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`app.localhost`)"
+      - "traefik.http.routers.app.entrypoints=web"
+      - "traefik.http.services.app.loadbalancer.server.port=3000"
     environment:
-      NEXT_PUBLIC_API_URL_CLIENT: http://localhost:8080
+      NEXT_PUBLIC_API_URL_CLIENT: http://api.localhost
       API_URL_SERVER: http://backend:8080
     networks:
       - default

@@ -6,8 +6,12 @@ This repository contains a fullstack project with a Go backend (REST API) and a 
 
 - **Title**: Meli Interview Marketplace
 - **Version**: 1.0
-- **Backend Host**: http://localhost:8080
-- **Frontend Host**: http://localhost:3000
+- **Backend Host**:
+	- http://localhost:8080 (default Docker Compose or local)
+	- http://api.localhost (with Traefik)
+- **Frontend Host**:
+	- http://localhost:3000 (default Docker Compose or local)
+	- http://app.localhost (with Traefik)
 
 ## Prerequisites
 
@@ -26,11 +30,26 @@ git clone https://github.com/LucasTI79/meli-interview.git
 cd meli-interview
 ```
 
-Build and start all services with Docker Compose:
+
+### Option 1: Default Docker Compose (localhost)
 
 ```
 docker-compose up backend frontend -d
 ```
+
+Access:
+- Backend: http://localhost:8080
+- Frontend: http://localhost:3000
+
+### Option 2: With Traefik Reverse Proxy (recommended for custom domains)
+
+```
+docker-compose -f docker-compose-traefik.yml up -d
+```
+
+Access:
+- Backend: http://api.localhost
+- Frontend: http://app.localhost
 
 Or, to run only the backend or frontend locally:
 
@@ -51,20 +70,27 @@ npm install
 npm run dev
 ```
 
+
 ## Running the Application
 
-- Backend API: [http://localhost:8080](http://localhost:8080)
-- Frontend: [http://localhost:3000](http://localhost:3000)
+- If using default compose: 
+	- Backend API: [http://localhost:8080](http://localhost:8080)
+	- Frontend: [http://localhost:3000](http://localhost:3000)
+- If using Traefik:
+	- Backend API: [http://api.localhost](http://api.localhost)
+	- Frontend: [http://app.localhost](http://app.localhost)
 
 ## API Documentation
 
+
 After starting the backend, access the Swagger UI for API documentation and testing:
 
-- [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
+- Default compose: [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
+- Traefik: [http://api.localhost/swagger/index.html](http://api.localhost/swagger/index.html)
 
-Or scalar docs
-
-- [http://localhost:8080/docs](http://localhost:8080/docs)
+Or scalar docs:
+- Default compose: [http://localhost:8080/docs](http://localhost:8080/docs)
+- Traefik: [http://api.localhost/docs](http://api.localhost/docs)
 
 ## Features
 
@@ -76,10 +102,16 @@ Or scalar docs
 
 ## Example API Usage
 
+
 You can use [curl](https://curl.se/) or [Postman](https://www.postman.com/) to test the API endpoints. Example:
 
+Default compose:
 ```
 curl -X GET http://localhost:8080/products
+```
+Traefik:
+```
+curl -X GET http://api.localhost/products
 ```
 
 ## Data Models (Backend)
