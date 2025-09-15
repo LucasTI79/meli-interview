@@ -26,7 +26,7 @@ cd meli-interview
 This will start both backend and frontend containers:
 
 ```
-docker-compose up backend frontend -d
+docker-compose up -d -V
 ```
 
 - Backend API: http://api.localhost
