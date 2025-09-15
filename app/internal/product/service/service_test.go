@@ -21,7 +21,6 @@ func TestService_GetAll(t *testing.T) {
 		{Id: "2", Name: "Product 2"},
 	}
 
-	// Configura o retorno do mock
 	mockRepo.On("GetAll", filters).Return(expectedProducts, len(expectedProducts), nil).Once()
 
 	products, total, err := svc.GetAll(filters)
@@ -107,7 +106,6 @@ func TestService_GetByIDWithContext_Error(t *testing.T) {
 
 	ctx := context.Background()
 
-	// Configura o mock para retornar erro
 	mockRepo.On("GetByIDWithContext", ctx, "not-found").
 		Return(nil, errors.New("not found")).
 		Once()

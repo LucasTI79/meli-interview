@@ -33,7 +33,7 @@ func writeProductsJSONL(t *testing.T, products []product.Product) string {
 
 	content := strings.Join(lines, "\n")
 	if len(lines) > 0 {
-		content += "\n" // Add final newline
+		content += "\n"
 	}
 
 	err := os.WriteFile(fp, []byte(content), 0o600)
@@ -47,6 +47,20 @@ func newRepository(t *testing.T, filePath string) repository.Repository {
 	repo, err := jsonstore.NewProductRepository(filePath)
 	require.NoError(t, err)
 	return repo
+}
+
+func TestGetByID_ReturnsProductForValidID(t *testing.T) {
+	fp := writeProductsJSONL(t, []product.Product{
+		{Id: "123", Name: "Prod123", Category: "CatA", Price: 99.99},
+		{Id: "456", Name: "Prod456", Category: "CatB", Price: 10.0},
+	})
+	repo := newRepository(t, fp)
+
+	got, err := repo.GetByID("123")
+	require.NoError(t, err)
+	require.NotNil(t, got)
+	require.Equal(t, "123", got.Id)
+	require.Equal(t, "Prod123", got.Name)
 }
 
 func TestGetByIDWithContext_ReturnsProductForValidID(t *testing.T) {
@@ -116,8 +130,20 @@ func TestGetByIDWithContext_ProductNotFound(t *testing.T) {
 	require.ErrorIs(t, err, apperrors.ErrResourceNotExists)
 }
 
+func TestGetByID_ProductNotFound(t *testing.T) {
+	fp := writeProductsJSONL(t, []product.Product{
+		{Id: "exists", Name: "Exists", Category: "Cat", Price: 5},
+	})
+	repo := newRepository(t, fp)
+
+	got, err := repo.GetByID("missing-id")
+	require.Error(t, err)
+	require.Nil(t, got)
+	require.ErrorIs(t, err, apperrors.ErrResourceNotExists)
+}
+
 func TestGetByIDWithContext_PropagatesDatastoreError(t *testing.T) {
-	// Create a valid repository and then remove the underlying file to induce a read error on lookup.
+
 	fp := writeProductsJSONL(t, []product.Product{
 		{Id: "x", Name: "X", Category: "Y", Price: 1},
 	})
@@ -129,7 +155,7 @@ func TestGetByIDWithContext_PropagatesDatastoreError(t *testing.T) {
 	got, err := repo.GetByIDWithContext(ctx, "x")
 	require.Error(t, err)
 	require.Nil(t, got)
-	// Ensure it's not mistaken as a not-found logical error
+
 	require.False(t, errors.Is(err, apperrors.ErrResourceNotExists), "expected underlying datastore error, not a not-found error")
 }
 
@@ -140,7 +166,7 @@ func TestGetAll_NoFilters_ReturnsAll(t *testing.T) {
 	})
 	repo := newRepository(t, fp)
 
-	products, total, err := repo.GetAll(product.ProductFilter{})
+	products, total, err := repo.GetAll(product.ProductFilter{PageSize: 10})
 	require.NoError(t, err)
 	require.Len(t, products, 2)
 	require.Equal(t, 2, total)
@@ -153,7 +179,7 @@ func TestGetAll_FilterByName(t *testing.T) {
 	})
 	repo := newRepository(t, fp)
 
-	products, total, err := repo.GetAll(product.ProductFilter{Name: "phone"})
+	products, total, err := repo.GetAll(product.ProductFilter{Name: "phone", PageSize: 10})
 	require.NoError(t, err)
 	require.Len(t, products, 1)
 	require.Equal(t, 1, total)
@@ -167,7 +193,7 @@ func TestGetAll_FilterByCategories(t *testing.T) {
 	})
 	repo := newRepository(t, fp)
 
-	products, total, err := repo.GetAll(product.ProductFilter{Categories: []string{"fashion"}})
+	products, total, err := repo.GetAll(product.ProductFilter{Categories: []string{"fashion"}, PageSize: 10})
 	require.NoError(t, err)
 	require.Len(t, products, 1)
 	require.Equal(t, "T-shirt", products[0].Name)
@@ -182,7 +208,7 @@ func TestGetAll_FilterByPriceRange(t *testing.T) {
 	})
 	repo := newRepository(t, fp)
 
-	products, total, err := repo.GetAll(product.ProductFilter{MinPrice: 10, MaxPrice: 100})
+	products, total, err := repo.GetAll(product.ProductFilter{MinPrice: 10, MaxPrice: 100, PageSize: 10})
 	require.NoError(t, err)
 	require.Len(t, products, 1)
 	require.Equal(t, "Mid", products[0].Name)
@@ -211,7 +237,7 @@ func TestGetAllWithContext_BehavesLikeGetAll(t *testing.T) {
 	repo := newRepository(t, fp)
 
 	ctx := context.Background()
-	products, total, err := repo.GetAllWithContext(ctx, product.ProductFilter{Categories: []string{"ctx"}})
+	products, total, err := repo.GetAllWithContext(ctx, product.ProductFilter{Categories: []string{"ctx"}, PageSize: 10})
 	require.NoError(t, err)
 	require.Len(t, products, 1)
 	require.Equal(t, 1, total)

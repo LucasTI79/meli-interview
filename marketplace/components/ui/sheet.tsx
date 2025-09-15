@@ -5,12 +5,10 @@ import * as SheetPrimitive from '@radix-ui/react-dialog'
 import { XIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-// ---- Root ----
 const Sheet = (props: React.ComponentProps<typeof SheetPrimitive.Root>) => (
   <SheetPrimitive.Root data-slot="sheet" {...props} />
 )
 
-// ---- Trigger ----
 const SheetTrigger = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Trigger>
@@ -19,7 +17,6 @@ const SheetTrigger = React.forwardRef<
 ))
 SheetTrigger.displayName = 'SheetTrigger'
 
-// ---- Close ----
 const SheetClose = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Close>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Close>
@@ -28,12 +25,10 @@ const SheetClose = React.forwardRef<
 ))
 SheetClose.displayName = 'SheetClose'
 
-// ---- Portal ----
 const SheetPortal = (props: React.ComponentProps<typeof SheetPrimitive.Portal>) => (
   <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
 )
 
-// ---- Overlay ----
 const SheetOverlay = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
@@ -50,7 +45,6 @@ const SheetOverlay = React.forwardRef<
 ))
 SheetOverlay.displayName = 'SheetOverlay'
 
-// ---- Content ----
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> & { side?: 'top' | 'right' | 'bottom' | 'left' }
@@ -84,7 +78,6 @@ const SheetContent = React.forwardRef<
 ))
 SheetContent.displayName = 'SheetContent'
 
-// ---- Header & Footer ----
 const SheetHeader = React.forwardRef<
   HTMLDivElement,
   React.ComponentPropsWithoutRef<'div'>
@@ -101,7 +94,6 @@ const SheetFooter = React.forwardRef<
 ))
 SheetFooter.displayName = 'SheetFooter'
 
-// ---- Title & Description ----
 const SheetTitle = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
@@ -118,7 +110,6 @@ const SheetDescription = React.forwardRef<
 ))
 SheetDescription.displayName = 'SheetDescription'
 
-// ---- Export ----
 export {
   Sheet,
   SheetTrigger,

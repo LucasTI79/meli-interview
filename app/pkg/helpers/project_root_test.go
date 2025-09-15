@@ -10,15 +10,12 @@ import (
 )
 
 func TestProjectRoot(t *testing.T) {
-	// Backup original env
 	orig := os.Getenv("PROJECT_ROOT")
 	defer os.Setenv("PROJECT_ROOT", orig)
 
-	// Test with PROJECT_ROOT env
 	os.Setenv("PROJECT_ROOT", "/tmp/project")
 	require.Equal(t, "/tmp/project", helpers.ProjectRoot())
 
-	// Test without PROJECT_ROOT (falls back to cwd)
 	os.Unsetenv("PROJECT_ROOT")
 	root := helpers.ProjectRoot()
 	require.NotEmpty(t, root)
@@ -55,7 +52,6 @@ func TestCreateFile(t *testing.T) {
 	require.NotNil(t, f)
 	defer f.Close()
 
-	// Check file exists
 	info, err := os.Stat(filepath.Join(tmp, "dir/file.txt"))
 	require.NoError(t, err)
 	require.False(t, info.IsDir())
@@ -70,7 +66,6 @@ func TestSaveJSON(t *testing.T) {
 	err := helpers.SaveJSON("dir/data.json", data)
 	require.NoError(t, err)
 
-	// Read back and verify
 	content, err := os.ReadFile(filepath.Join(tmp, "dir/data.json"))
 	require.NoError(t, err)
 	require.Contains(t, string(content), `"foo": "bar"`)

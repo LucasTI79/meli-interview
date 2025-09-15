@@ -38,7 +38,7 @@ func (router *router) MapRoutes(appFactory *factory.AppFactory) http.Handler {
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
-		MaxAge:           300, // valor em segundos (cache do preflight request)
+		MaxAge:           300,
 	}))
 
 	r.Mount("/", buildDocsRoutes())

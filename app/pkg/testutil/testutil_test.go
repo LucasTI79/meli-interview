@@ -13,7 +13,6 @@ func TestWithUrlParam(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test", nil)
 	req = testutil.WithUrlParam(t, req, "id", "123")
 
-	// Retrieve Chi route context
 	chiCtx := chi.RouteContext(req.Context())
 	require.NotNil(t, chiCtx, "Chi context should not be nil")
 

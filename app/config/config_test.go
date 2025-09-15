@@ -10,7 +10,6 @@ import (
 )
 
 func TestLoadConfig_Defaults(t *testing.T) {
-	// Clear environment variables to test defaults
 	os.Unsetenv("SERVER_HOST")
 	os.Unsetenv("SERVER_PORT")
 	os.Unsetenv("SERVER_TIMEOUT_READ")
@@ -34,7 +33,6 @@ func TestLoadConfig_FromEnv(t *testing.T) {
 	os.Setenv("SERVER_TIMEOUT_IDLE", "20")
 
 	defer func() {
-		// Clean up environment variables after test
 		os.Unsetenv("SERVER_HOST")
 		os.Unsetenv("SERVER_PORT")
 		os.Unsetenv("SERVER_TIMEOUT_READ")

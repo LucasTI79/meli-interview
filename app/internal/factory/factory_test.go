@@ -44,12 +44,10 @@ func TestNewAppFactory(t *testing.T) {
 }
 
 func TestInitFactoryAndGetFactory(t *testing.T) {
-	// Ensure panic if not initialized
 	require.Panics(t, func() {
 		factory.GetFactory()
 	})
 
-	// Initialize
 	err := factory.InitFactory()
 	require.NoError(t, err)
 

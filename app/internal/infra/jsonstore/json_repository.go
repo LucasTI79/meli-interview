@@ -60,15 +60,22 @@ func (r *JSONRepository[T]) buildIndex() error {
 
 	var offset int64 = 0
 	scanner := bufio.NewScanner(f)
+	const maxCapacity = 1024 * 102
+	buf := make([]byte, 0, 64*1024)
+	scanner.Buffer(buf, maxCapacity)
+
 	for scanner.Scan() {
-		var entity T
 		line := scanner.Bytes()
-		if err := json.Unmarshal(line, &entity); err != nil {
-			return err
+
+		var entity T
+		if err := json.Unmarshal(line, &entity); err == nil {
+			id := r.getID(entity)
+			if id != "" {
+				r.index[id] = offset
+			}
 		}
-		id := r.getID(entity)
-		r.index[id] = offset
-		offset += int64(len(line) + 1) // +1 para o '\n'
+
+		offset += int64(len(line) + 1)
 	}
 	return scanner.Err()
 }
@@ -101,7 +108,7 @@ func (r *JSONRepository[T]) FindByID(id string) (T, error) {
 
 	var entity T
 	if err := json.Unmarshal(line, &entity); err != nil {
-		return zero, err
+		return zero, fmt.Errorf("%w: file %s, offset %d: %v", apperrors.ErrInvalidDataFormat, r.filePath, offset, err)
 	}
 
 	return entity, nil
@@ -151,10 +158,12 @@ func (r *JSONRepository[T]) FindAll(handler func(entity T) error) error {
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
+	lineNo := 0
 	for scanner.Scan() {
+		lineNo++
 		var entity T
 		if err := json.Unmarshal(scanner.Bytes(), &entity); err != nil {
-			return err
+			return fmt.Errorf("%w: file %s, line %d: %v", apperrors.ErrInvalidDataFormat, r.filePath, lineNo, err)
 		}
 		if err := handler(entity); err != nil {
 			return err
@@ -178,10 +187,12 @@ func (r *JSONRepository[T]) FindAllWhere(predicate func(entity T) bool, handler 
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
+	lineNo := 0
 	for scanner.Scan() {
+		lineNo++
 		var entity T
 		if err := json.Unmarshal(scanner.Bytes(), &entity); err != nil {
-			return err
+			return fmt.Errorf("%w: file %s, line %d: %v", apperrors.ErrInvalidDataFormat, r.filePath, lineNo, err)
 		}
 
 		if predicate(entity) {
@@ -217,11 +228,13 @@ func (r *JSONRepository[T]) FindAllWherePaginated(
 	collected := 0
 	total := 0
 	start := (page - 1) * pageSize
+	lineNo := 0
 
 	for scanner.Scan() {
+		lineNo++
 		var entity T
 		if err := json.Unmarshal(scanner.Bytes(), &entity); err != nil {
-			return total, err
+			return total, fmt.Errorf("%w: file %s, line %d: %v", apperrors.ErrInvalidDataFormat, r.filePath, lineNo, err)
 		}
 
 		if predicate(entity) {

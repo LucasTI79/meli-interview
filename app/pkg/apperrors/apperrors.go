@@ -9,4 +9,5 @@ var (
 	ErrResourceAlreadyExists = errors.New("resource already exists")
 	ErrUnauthorized          = errors.New("unauthorized")
 	ErrForbidden             = errors.New("forbidden")
+	ErrInvalidDataFormat     = errors.New("invalid data format")
 )

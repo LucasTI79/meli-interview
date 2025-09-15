@@ -20,5 +20,5 @@ func TestRouterMounts(t *testing.T) {
 	r.ServeHTTP(resp, req)
 
 	assert.NotNil(t, resp)
-	assert.Contains(t, resp.Body.String(), "") // verificar se não deu panic
+	assert.Contains(t, resp.Body.String(), "")
 }
